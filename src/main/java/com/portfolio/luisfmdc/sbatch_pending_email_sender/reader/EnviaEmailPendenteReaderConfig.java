@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-public class ItemReaderConfig {
+public class EnviaEmailPendenteReaderConfig {
 
     private static final String SQL_QUERY = """
         SELECT *
@@ -21,7 +21,7 @@ public class ItemReaderConfig {
     @Bean
     public JdbcCursorItemReader<Pendencia> itemReader(@Qualifier("appDataSource") DataSource dataSource) {
         return new JdbcCursorItemReaderBuilder<Pendencia>()
-                .name("itemReader")
+                .name("enviaEmailPendenteReaderConfig")
                 .dataSource(dataSource)
                 .sql(SQL_QUERY)
                 .beanRowMapper(Pendencia.class)

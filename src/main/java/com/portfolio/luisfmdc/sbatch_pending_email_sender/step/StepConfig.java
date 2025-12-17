@@ -16,16 +16,16 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class StepConfig {
 
-    private final ItemReader<Pendencia> itemReader;
-    private final ItemProcessor<Pendencia, NotificacaoPendencia> itemProcessor;
+    private final ItemReader<Pendencia> enviaEmailPendenteReaderConfig;
+    private final ItemProcessor<Pendencia, NotificacaoPendencia> enviaEmailPendenteProcessor;
     private final ItemWriter<NotificacaoPendencia> itemWriter;
 
     @Bean
     public Step enviarEmailPendenciasStep(JobRepository jobRepository) {
         return new StepBuilder("enviarEmailPendenciasStep", jobRepository)
                 .chunk(10)
-                .reader(itemReader)
-                .processor(itemProcessor)
+                .reader(enviaEmailPendenteReaderConfig)
+                .processor(enviaEmailPendenteProcessor)
                 .writer(itemWriter)
                 .build();
     }
