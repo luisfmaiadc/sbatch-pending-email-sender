@@ -18,15 +18,15 @@ public class StepConfig {
 
     private final ItemReader<Pendencia> enviaEmailPendenteReaderConfig;
     private final ItemProcessor<Pendencia, NotificacaoPendencia> enviaEmailPendenteProcessor;
-    private final ItemWriter<NotificacaoPendencia> itemWriter;
+    private final ItemWriter<NotificacaoPendencia> enviaEmailPendenteWriter;
 
     @Bean
     public Step enviarEmailPendenciasStep(JobRepository jobRepository) {
         return new StepBuilder("enviarEmailPendenciasStep", jobRepository)
-                .chunk(10)
+                .<Pendencia, NotificacaoPendencia>chunk(10)
                 .reader(enviaEmailPendenteReaderConfig)
                 .processor(enviaEmailPendenteProcessor)
-                .writer(itemWriter)
+                .writer(enviaEmailPendenteWriter)
                 .build();
     }
 }

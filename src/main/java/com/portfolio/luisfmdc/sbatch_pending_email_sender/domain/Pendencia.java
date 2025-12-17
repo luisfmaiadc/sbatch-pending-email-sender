@@ -16,4 +16,8 @@ public class Pendencia {
     private String status;
     private String responsavel;
     private LocalDateTime dataCriacao;
+
+    public String getNome() {
+        return responsavel.split("@")[0].toUpperCase();
+    }
 }

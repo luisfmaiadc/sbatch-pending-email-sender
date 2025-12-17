@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 @StepScope
 @Component
@@ -19,16 +17,14 @@ public class EnviaEmailPendenteProcessor implements ItemProcessor<Pendencia, Not
     private final LocalDateTime dataReferencia;
 
     public EnviaEmailPendenteProcessor(
-            @Value("#{jobExecution.startTime}") Date startTime) {
-        this.dataReferencia = startTime.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+            @Value("#{stepExecution.jobExecution.startTime}") LocalDateTime startTime) {
+        this.dataReferencia = startTime;
     }
 
     @Override
-    public NotificacaoPendencia process(Pendencia item) throws Exception {
+    public NotificacaoPendencia process(Pendencia item) {
         int diasEmAberto = calcularDiasEmAberto(item.getDataCriacao());
-        return new NotificacaoPendencia(item.getResponsavel(), item.getAssunto(), item.getDescricao(), diasEmAberto);
+        return new NotificacaoPendencia(item.getNome(), item.getResponsavel(), item.getAssunto(), item.getDescricao(), diasEmAberto);
     }
 
     private int calcularDiasEmAberto(LocalDateTime dataCriacao) {
