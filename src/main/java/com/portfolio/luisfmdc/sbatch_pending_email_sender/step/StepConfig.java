@@ -23,7 +23,7 @@ public class StepConfig {
     @Bean
     public Step enviarEmailPendenciasStep(JobRepository jobRepository) {
         return new StepBuilder("enviarEmailPendenciasStep", jobRepository)
-                .chunk(1)
+                .chunk(10)
                 .reader(itemReader)
                 .processor(itemProcessor)
                 .writer(itemWriter)
