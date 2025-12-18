@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family: Arial, sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td align="center" style="padding: 30px 0;">
+
+            <table width="600" cellpadding="0" cellspacing="0"
+                   style="background-color:#ffffff; border-radius:6px; overflow:hidden;">
+
+                <tr>
+                    <td style="background-color:#2f80ed; color:#ffffff; padding:20px;">
+                        <h2 style="margin:0;">Pendências em Aberto</h2>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:20px; color:#333333;">
+
+                        <p style="font-size:14px;">
+                            Olá, <strong th:text="${nome}">Nome</strong>!
+                        </p>
+
+                        <p style="font-size:14px;">
+                            Você possui <strong th:text="${total}">0</strong> pendência(s) em aberto:
+                        </p>
+
+                        <table width="100%" cellpadding="8" cellspacing="0"
+                               style="border-collapse: collapse; font-size:13px;">
+
+                            <thead>
+                            <tr style="background-color:#f0f0f0;">
+                                <th align="left" style="border:1px solid #ddd;">Assunto</th>
+                                <th align="left" style="border:1px solid #ddd;">Descrição</th>
+                                <th align="center" style="border:1px solid #ddd;">Dias em aberto</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="p : ${pendencias}">
+                                <td style="border:1px solid #ddd;" th:text="${p.assunto}">Assunto</td>
+                                <td style="border:1px solid #ddd;" th:text="${p.descricao}">Descrição</td>
+                                <td align="center" style="border:1px solid #ddd;"
+                                    th:text="${p.diasEmAberto}">0</td>
+                            </tr>
+                            </tbody>
+
+                        </table>
+
+                        <p style="font-size:13px; margin-top:20px;">
+                            Por favor, acesse o sistema para regularizar as pendências.
+                        </p>
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="background-color:#f4f6f8; padding:15px; font-size:11px; color:#777;">
+                        Este é um e-mail automático. Não responda.
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

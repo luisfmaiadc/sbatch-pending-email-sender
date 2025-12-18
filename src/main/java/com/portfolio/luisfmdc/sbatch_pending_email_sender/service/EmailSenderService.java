@@ -1,10 +1,13 @@
 package com.portfolio.luisfmdc.sbatch_pending_email_sender.service;
 
+import com.portfolio.luisfmdc.sbatch_pending_email_sender.domain.EmailPendencias;
 import com.portfolio.luisfmdc.sbatch_pending_email_sender.domain.NotificacaoPendencia;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,41 +18,29 @@ import java.util.List;
 public class EmailSenderService {
 
     private final JavaMailSender javaMailSender;
+    private final EmailTemplateService emailTemplateService;
 
-    public void enviarEmailPendencia(String responsavel, List<NotificacaoPendencia> notificacaoPendenciaList) {
+    public void enviarEmailPendencia(String responsavel, List<NotificacaoPendencia> pendencias) {
+
         aguardarEnvioMailTrap();
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom("sbatch-pending-email-sender@luisfmaiadc.com");
-        mailMessage.setTo(responsavel);
-        mailMessage.setSubject("Chamados em Aberto para Resolução");
-        mailMessage.setText(montarMensagem(notificacaoPendenciaList));
-        log.info("[EmailSenderService] Enviando e-mail para: {}", responsavel);
-        javaMailSender.send(mailMessage);
-    }
 
-    private String montarMensagem(List<NotificacaoPendencia> pendencias) {
+        try {
+            EmailPendencias email = new EmailPendencias(pendencias.getFirst().nomeResponsavel(), responsavel, pendencias);
+            String html = emailTemplateService.gerarHtml(email);
 
-        StringBuilder sb = new StringBuilder();
-         sb.append("Olá, ")
-                 .append(pendencias.getFirst().nomeResponsavel())
-                 .append("!\n\n");
-        sb.append("Você possui ")
-                .append(pendencias.size())
-                .append(" pendência(s) em aberto:\n\n");
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
 
-        for (NotificacaoPendencia p : pendencias) {
-            sb.append("* ")
-                    .append(p.assunto())
-                    .append(" (")
-                    .append(p.diasEmAberto())
-                    .append(" dias em aberto)\n")
-                    .append("  - Descrição: ")
-                    .append(p.descricao())
-                    .append("\n\n");
+            helper.setFrom("sbatch-pending-email-sender@luisfmaiadc.com");
+            helper.setTo(responsavel);
+            helper.setSubject("Chamados em Aberto para Resolução");
+            helper.setText(html, true);
+
+            log.info("[EmailSenderService] Enviando e-mail HTML para: {}", responsavel);
+            javaMailSender.send(message);
+        } catch (MessagingException ex) {
+            log.error("[EmailSenderService] Erro ao enviar e-mail HTML", ex);
         }
-
-        sb.append("\nPor favor, verifique.\n");
-        return sb.toString();
     }
 
     private void aguardarEnvioMailTrap() {
