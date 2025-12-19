@@ -29,25 +29,22 @@ public class EnviaEmailPendenteWriter implements ItemWriter<NotificacaoPendencia
     private final List<NotificacaoPendencia> pendenciasDoResponsavel = new ArrayList<>();
 
     @Override
-    public void write(Chunk<? extends NotificacaoPendencia> chunk) throws Exception {
-        chunk.getItems().forEach(item -> {
+    public void write(Chunk<? extends NotificacaoPendencia> chunk) {
+
+        for (NotificacaoPendencia item : chunk.getItems()) {
+
             if (responsavelAtual == null) {
-                obterNovoResponsavel(item);
+                responsavelAtual = item.emailResponsavel();
             }
 
-            if (item.emailResponsavel().equals(responsavelAtual)) {
-                pendenciasDoResponsavel.add(item);
-            } else {
+            if (!item.emailResponsavel().equals(responsavelAtual)) {
                 enviarEmailResponsavelAtual();
-                obterNovoResponsavel(item);
+                pendenciasDoResponsavel.clear();
+                responsavelAtual = item.emailResponsavel();
             }
-        });
-    }
 
-    private void obterNovoResponsavel(NotificacaoPendencia item) {
-        responsavelAtual = item.emailResponsavel();
-        pendenciasDoResponsavel.clear();
-        pendenciasDoResponsavel.add(item);
+            pendenciasDoResponsavel.add(item);
+        }
     }
 
     private void enviarEmailResponsavelAtual() {
